@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from "react";
 import { supabase } from "../utils/supabaseClient";
 
-const ChatRoom = ({roomId}:{roomId:String}) => {
+const ChatRoom = ({roomId}:{roomId:string}) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
     
@@ -48,7 +48,7 @@ const ChatRoom = ({roomId}:{roomId:String}) => {
         setNewMessage("");
     };
     const[typing,setTyping]=useState(false);
-    const handleTyping=async (e:any)=>{
+    const handleTyping=async (e: React.KeyboardEvent<HTMLInputElement>)=>{
         if(e.key==="Enter"){
             await sendMessage();
         }else{

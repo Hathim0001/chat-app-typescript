@@ -1,48 +1,49 @@
-import React,{useState,useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabaseClient";
 
-const RoomList=({onRoomSelect}:{onRoomSelect:(roomId:string)=>void})=>{
-    const [rooms,setRooms]=useState<any[]>([]);
-    const [newRoomName,setNewRoomName]=useState<string>("");
+// Define a type for rooms
+interface Room {
+    id: number;
+    name: string;
+    created_at: string;
+}
 
-    useEffect(()=>{
-        const fetchRooms=async()=>{
-            const {data,error}=await supabase
+interface RoomListProps {
+    onRoomSelect: (roomId: string) => void;
+}
+
+const RoomList: React.FC<RoomListProps> = ({ onRoomSelect }) => {
+    const [rooms, setRooms] = useState<Room[]>([]);
+
+    useEffect(() => {
+        const fetchRooms = async () => {
+            const { data, error } = await supabase
                 .from("rooms")
                 .select("*")
-                .order("created_at",{ascending:true});
-            if(error){
-                console.error("Error fetching rooms:",error);
-            }else{
-                setRooms(data);
+                .order("created_at", { ascending: true });
+
+            if (error) {
+                console.error("Error fetching rooms:", error);
+            } else {
+                setRooms(data as Room[]);
             }
         };
+
         fetchRooms();
-    },[]);
+    }, []);
 
-    const createRoom=async()=>{
-        await supabase.from("rooms").insert({
-            name:newRoomName,
-        });
-        setNewRoomName("");
-    };
-
-    return(
+    return (
         <div>
-            <h2>Chat Rooms</h2>
+            <h2>Available Rooms</h2>
             <ul>
-                {rooms.map((room)=>(
-                    <li key={room.id} onClick={()=>onRoomSelect(room.id)}>{room.name}</li>
+                {rooms.map((room) => (
+                    <li key={room.id} onClick={() => onRoomSelect(room.id.toString())} style={{ cursor: "pointer" }}>
+                        {room.name}
+                    </li>
                 ))}
             </ul>
-            <input
-                type="text"
-                value={newRoomName}
-                onChange={(e)=>setNewRoomName(e.target.value)}
-                placeholder="New room name"
-            />
-            <button onClick={createRoom}>Create Room</button>
         </div>
     );
 };
+
 export default RoomList;

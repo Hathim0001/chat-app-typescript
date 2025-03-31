@@ -37,13 +37,30 @@ const ChatRoom = ({roomId}:{roomId:String}) => {
 }, [roomId]);
 
     const sendMessage=async () => {
-        await supabase.from("messages").insert({
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        await
+        supabase.from("messages").insert({
             room_id: roomId,
-            user_id: "user1",
+            user_id: user.id,
             content: newMessage,
-    });
+        });
         setNewMessage("");
     };
+    const[typing,setTyping]=useState(false);
+    const handleTyping=async (e:any)=>{
+        if(e.key==="Enter"){
+            await sendMessage();
+        }else{
+            setTyping(true);
+        }
+    };
+    <input
+    value={newMessage}
+    onChange={(e)=>setNewMessage(e.target.value)}
+    onKeyDown={handleTyping}
+   />;
+        {typing && <span>User is typing...</span>}
     return(
         <div>
             <div>

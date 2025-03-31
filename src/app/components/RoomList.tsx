@@ -44,4 +44,5 @@ const RoomList=({onRoomSelect}:{onRoomSelect:(roomId:string)=>void})=>{
             <button onClick={createRoom}>Create Room</button>
         </div>
     );
-}
+};
+export default RoomList;
